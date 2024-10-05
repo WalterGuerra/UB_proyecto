@@ -11,8 +11,8 @@ class HerramientaController:
             conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute(
-                "INSERT INTO herramienta (tipo, cantidad, id_usuario, disponibles, funcionalidad) VALUES (%s, %s, %s, %s, %s)",
-                (herramienta.tipo, herramienta.cantidad, herramienta.id_usuario, herramienta.disponibles, herramienta.funcionalidad)
+                "INSERT INTO herramienta (tipo, cantidad, id_usuario, disponibles, funcionalidad, estado) VALUES (%s, %s, %s, %s, %s, %s)",
+                (herramienta.tipo, herramienta.cantidad, herramienta.id_usuario, herramienta.disponibles, herramienta.funcionalidad, herramienta.estado)
             )
             conn.commit()
             return {"mensaje": "Herramienta creada exitosamente"}
@@ -83,7 +83,7 @@ class HerramientaController:
             conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute(
-                "UPDATE herramienta SET tipo = %s, cantidad = %s, id_usuario = %s, disponibles = %s, funcionalidad = %s WHERE id = %s",
+                "UPDATE herramienta SET tipo = %s, cantidad = %s, id_usuario = %s, disponibles = %s, funcionalidad = %s, estado = %s  WHERE id = %s",
                 (herramienta.tipo, herramienta.cantidad, herramienta.id_usuario, herramienta.disponibles, herramienta.funcionalidad, herramienta_id)
             )
             conn.commit()

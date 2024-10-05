@@ -12,8 +12,8 @@ class PerfilController:
             conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute(
-                "INSERT INTO perfil (nombre, descripcion) VALUES (%s, %s)",
-                (perfil.nombre, perfil.descripcion)
+                "INSERT INTO perfil (nombre, descripcion, estado) VALUES (%s, %s, %s)",
+                (perfil.nombre, perfil.descripcion, perfil.estado)
             )
             conn.commit()
             return {"mensaje": "Perfil creado exitosamente"}
@@ -83,8 +83,8 @@ class PerfilController:
             conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute(
-                "UPDATE perfil SET nombre = %s, descripcion = %s WHERE id = %s",
-                (perfil.nombre, perfil.descripcion, perfil_id)
+                "UPDATE perfil SET nombre = %s, descripcion = %s, estado = %s WHERE id = %s",
+                (perfil.nombre, perfil.descripcion, perfil.estado, perfil_id)
             )
             conn.commit()
             if cursor.rowcount == 0:

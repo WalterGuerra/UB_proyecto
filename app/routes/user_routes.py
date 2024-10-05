@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from controllers.user_controller import *
 from models.user_model import User
+from fastapi import APIRouter, HTTPException, UploadFile, File
 
 router = APIRouter()
 usuario = UserController()
@@ -47,3 +48,8 @@ async def update_user(user_id: int, user: User):
         raise e
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/create_user_masivo")
+async def create_user_masivo(file: UploadFile = File(...)):
+    rpta = usuario.create_user_masivo(file) 
+    return rpta

@@ -12,7 +12,7 @@ class CamionesController:
             conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute(
-                "INSERT INTO camiones (modelo, capacidad, cantidad_herramientas) VALUES (%s, %s, %s)",
+                "INSERT INTO camiones (modelo, capacidad, cantidad_herramientas, estado) VALUES (%s, %s, %s, %s)",
                 (camion.modelo, camion.capacidad, camion.cantidad_herramientas)
             )
             conn.commit()
@@ -35,7 +35,8 @@ class CamionesController:
                     'id': result[0],
                     'modelo': result[1],
                     'capacidad': result[2],
-                    'cantidad_herramientas': result[3]
+                    'cantidad_herramientas': result[3],
+                    'estado': result[4]
                 }
                 return jsonable_encoder(content)
             else:
@@ -60,7 +61,8 @@ class CamionesController:
                     'id': data[0],
                     'modelo': data[1],
                     'capacidad': data[2],
-                    'cantidad_herramientas': data[3]
+                    'cantidad_herramientas': data[3],
+                    'estado': data[4]
                 }
                 payload.append(content)
 
@@ -77,7 +79,7 @@ class CamionesController:
             conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute(
-                "UPDATE camiones SET modelo = %s, capacidad = %s, cantidad_herramientas = %s WHERE id = %s",
+                "UPDATE camiones SET modelo = %s, capacidad = %s, cantidad_herramientas = %s, estado = %s WHERE id = %s",
                 (camion.modelo, camion.capacidad, camion.cantidad_herramientas, camion_id)
             )
             conn.commit()
