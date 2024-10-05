@@ -11,8 +11,10 @@ class HerramientaController:
             conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute(
-                "INSERT INTO herramienta (tipo, cantidad, id_usuario, disponibles, funcionalidad, estado) VALUES (%s, %s, %s, %s, %s, %s)",
-                (herramienta.tipo, herramienta.cantidad, herramienta.id_usuario, herramienta.disponibles, herramienta.funcionalidad, herramienta.estado)
+                cursor.execute(
+        "INSERT INTO herramienta (tipo, cantidad, id_usuario, disponibles, funcionalidad) VALUES (%s, %s, %s, %s, %s)",
+        (herramienta.tipo, herramienta.cantidad, herramienta.id_usuario, herramienta.disponibles, herramienta.funcionalidad)
+    )
             )
             conn.commit()
             return {"mensaje": "Herramienta creada exitosamente"}
@@ -22,7 +24,6 @@ class HerramientaController:
             raise HTTPException(status_code=500, detail=f"Unexpected error: {err}")
         finally:
             if conn:
-                
                 conn.close()
 
     def get_herramienta(self, herramienta_id: int):
@@ -82,14 +83,21 @@ class HerramientaController:
         try:
             conn = get_db_connection()
             cursor = conn.cursor()
+            
+            # Cambiar INSERT por UPDATE y ajustar la consulta
             cursor.execute(
-                "UPDATE herramienta SET tipo = %s, cantidad = %s, id_usuario = %s, disponibles = %s, funcionalidad = %s, estado = %s  WHERE id = %s",
+                "UPDATE herramienta SET tipo = %s, cantidad = %s, id_usuario = %s, disponibles = %s, funcionalidad = %s WHERE id = %s",
                 (herramienta.tipo, herramienta.cantidad, herramienta.id_usuario, herramienta.disponibles, herramienta.funcionalidad, herramienta_id)
             )
-            conn.commit()
+            
+            conn.commit()  # Confirma la transacción
+
+            # Comprobar si se actualizó alguna fila
             if cursor.rowcount == 0:
                 raise HTTPException(status_code=404, detail="Herramienta no encontrada o no se realizaron cambios")
+            
             return {"mensaje": "Herramienta actualizada exitosamente"}
+        
         except mysql.connector.Error as err:
             raise HTTPException(status_code=500, detail=f"Database error: {err}")
         except Exception as err:

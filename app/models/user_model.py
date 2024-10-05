@@ -10,4 +10,4 @@ class User(BaseModel):
     telefono: str
     idperfil: int
     idcamiones: int
-    estado: int
+   

@@ -12,7 +12,7 @@ class AtributoController:
             conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute(
-                "INSERT INTO atributo (nombre, descripcion, estado) VALUES (%s, %s, %s)",
+                "INSERT INTO atributo (nombre, descripcion) VALUES (%s, %s)",
                 (atributo.nombre, atributo.descripcion)
             )
             conn.commit()
@@ -34,8 +34,7 @@ class AtributoController:
                 content = {
                     'id': result[0],
                     'nombre': result[1],
-                    'descripcion': result[2],
-                    'estado': result[3]
+                    'descripcion': result[2]
                 }
                 return jsonable_encoder(content)
             else:
@@ -59,8 +58,7 @@ class AtributoController:
                 content = {
                     'id': data[0],
                     'nombre': data[1],
-                    'descripcion': data[2],
-                    'estado': data[3]
+                    'descripcion': data[2]
                 }
                 payload.append(content)
 
@@ -77,7 +75,7 @@ class AtributoController:
             conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute(
-                "UPDATE atributo SET nombre = %s, descripcion = %s, estado = %s WHERE id = %s",
+                "UPDATE atributo SET nombre = %s, descripcion = %s WHERE id = %s",
                 (atributo.nombre, atributo.descripcion, atributo_id)
             )
             conn.commit()

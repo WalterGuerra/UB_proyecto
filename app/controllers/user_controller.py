@@ -16,8 +16,8 @@ class UserController:
             conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute(
-                "INSERT INTO usuario (usuario, contrasena, nombre, apellido, documento, telefono, idperfil, idcamiones, estado) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                (user.usuario, user.contrasena, user.nombre, user.apellido, user.documento, user.telefono, user.idperfil, user.idcamiones, user.estado)  
+                "INSERT INTO usuario (usuario, contrasena, nombre, apellido, documento, telefono, idperfil, idcamiones) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                (user.usuario, user.contrasena, user.nombre, user.apellido, user.documento, user.telefono, user.idperfil, user.idcamiones)  
             )
             conn.commit()
             return {"mensaje": "Usuario creado exitosamente"}
@@ -47,7 +47,7 @@ class UserController:
                     'telefono': result[6],
                     'idperfil': result[7],
                     'idcamiones': result[8],
-                    'estado': result[9]
+                    
                 }
                 return jsonable_encoder(content)
             else:
@@ -78,7 +78,7 @@ class UserController:
                     'telefono': data[6],
                     'idperfil': data[7],
                     'idcamiones': data[8],
-                    'estado': data[9]
+                    
                 }
                 payload.append(content)
 
@@ -95,8 +95,8 @@ class UserController:
             conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute(
-                "UPDATE usuario SET usuario = %s, contrasena = %s, nombre = %s, apellido = %s, documento = %s, telefono = %s, idperfil = %s, idcamiones = %s, estado = %s WHERE id = %s",
-                (user.usuario, user.contrasena, user.nombre, user.apellido, user.documento, user.telefono, user.idperfil, user.idcamiones, user.estado ,user_id)
+                "UPDATE usuario SET usuario = %s, contrasena = %s, nombre = %s, apellido = %s, documento = %s, telefono = %s, idperfil = %s, idcamiones = %s",
+                (user.usuario, user.contrasena, user.nombre, user.apellido, user.documento, user.telefono, user.idperfil, user.idcamiones)
             )
             conn.commit()
             if cursor.rowcount == 0:
@@ -130,30 +130,48 @@ class UserController:
             # Leer el archivo Excel
             df = pd.read_excel(file.file, engine='openpyxl')
 
-            required_columns = ['usuario', 'contrasena', 'nombre', 'apellido', 'documento', 'telefono', 'idperfil', 'idcamiones', 'estado']
+            # Imprimir las columnas para depuración
+            print("Columnas en el archivo:", df.columns.tolist())
+
+            # Validar las columnas requeridas
+            required_columns = ['usuario', 'contrasena', 'nombre', 'apellido', 'documento', 'telefono', 'idperfil', 'idcamiones']
             for col in required_columns:
                 if col not in df.columns:
                     return {"error": f"Falta la columna: {col}"}
-            
+
+            # Reemplazar NaN con None
+            df.fillna(value={'idcamiones': None}, inplace=True)
+
+            # Crear una lista de tuplas con los datos a insertar
+            data_to_insert = [
+                (row['usuario'], row['contrasena'], row['nombre'], row['apellido'], row['documento'], row['telefono'], row['idperfil'], row['idcamiones'])
+                for index, row in df.iterrows()
+            ]
+
+            # Mostrar los datos procesados antes de la inserción
+            print("Datos procesados para inserción:", data_to_insert)
+
             # Conectar a la base de datos
             conn = get_db_connection()
             cursor = conn.cursor()
 
-            for index, row in df.iterrows():
-                cursor.execute(
-                    "INSERT INTO usuario (usuario,contrasena,nombre,apellido,documento,telefono,idperfil,idcamiones,estado) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-                    (row['usuario'], row['contrasena'], row['nombre'], row['apellido'], row['documento'], row['telefono'], row['idperfil'], row['idcamiones'], row['estado']) 
-                )
-            
-            conn.commit()  # un commit después de todas las inserciones
-            return {"resultado": "Users creados exitosamente"}
+            # Ejecutar la inserción masiva
+            cursor.executemany(
+                "INSERT INTO usuario (usuario, contrasena, nombre, apellido, documento, telefono, idperfil, idcamiones) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                data_to_insert
+            )
+
+            conn.commit()  # Commit después de todas las inserciones
+            return {"resultado": "Usuarios creados exitosamente", "datos_procesados": data_to_insert}
         except mysql.connector.Error as err:
             if conn:
                 conn.rollback()
+            print("Error de MySQL:", str(err))
             return {"error": str(err)}
         except Exception as e:
             if conn:
                 conn.rollback()
+            print("Error inesperado:", str(e))
             return {"error": f"Un error inesperado ocurrió: {str(e)}"}
         finally:
             if conn:

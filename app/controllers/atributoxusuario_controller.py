@@ -14,8 +14,8 @@ class AtributoxusuarioController:
             conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute(
-                "INSERT INTO atributoxusuario (idusuario, idatriduto, valor, descripcion, estado) VALUES (%s, %s, %s, %s, %s)",
-                (atributoxusuario.idusuario, atributoxusuario.idatriduto, atributoxusuario.valor, atributoxusuario.descripcion, atributoxusuario.estado)
+                "INSERT INTO atributoxusuario (idusuario, idatriduto, valor, descripcion) VALUES (%s, %s, %s, %s)",
+                (atributoxusuario.idusuario, atributoxusuario.idatriduto, atributoxusuario.valor, atributoxusuario.descripcion)
             )
             conn.commit()
             return {"mensaje": "Atributoxusuario creado exitosamente"}
@@ -38,8 +38,7 @@ class AtributoxusuarioController:
                     'idusuario': result[1],
                     'idatriduto': result[2],
                     'valor': result[3],
-                    'descripcion': result[4],
-                    'estado': result[5]
+                    'descripcion': result[4]
                 }
                 return jsonable_encoder(content)
             else:
@@ -65,8 +64,7 @@ class AtributoxusuarioController:
                     'idusuario': data[1],
                     'idatriduto': data[2],
                     'valor': data[3],
-                    'descripcion': data[4],
-                    'estado': data[5]
+                    'descripcion': data[4]
                 }
                 payload.append(content)
 
@@ -83,8 +81,8 @@ class AtributoxusuarioController:
             conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute(
-                "UPDATE atributoxusuario SET idusuario = %s, idatriduto = %s, valor = %s, descripcion = %s, estado = %s WHERE id = %s",
-                (atributoxusuario.idusuario, atributoxusuario.idatriduto, atributoxusuario.valor, atributoxusuario.descripcion, atributoxusuario.estado ,atributoxusuario_id)
+                "UPDATE atributoxusuario SET idusuario = %s, idatriduto = %s, valor = %s, descripcion = %s WHERE id = %s",
+                (atributoxusuario.idusuario, atributoxusuario.idatriduto, atributoxusuario.valor, atributoxusuario.descripcion, atributoxusuario_id)
             )
             conn.commit()
             if cursor.rowcount == 0:
